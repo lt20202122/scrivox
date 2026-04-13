@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "handwriting-tts",
-    "slug": "handwriting-tts",
+    "name": "Scrivox",
+    "slug": "scrivox",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
