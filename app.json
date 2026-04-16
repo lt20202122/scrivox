@@ -2,6 +2,7 @@
   "expo": {
     "name": "Scrivox",
     "slug": "scrivox",
+    "scheme": "scrivox",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -10,20 +11,48 @@
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#F5F0E8"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.scrivox.app",
+      "infoPlist": {
+        "NSMicrophoneUsageDescription": "Scrivox uses the microphone to convert your speech into handwriting-style text.",
+        "NSSpeechRecognitionUsageDescription": "Scrivox uses speech recognition to transcribe your voice into text."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#F5F0E8"
       },
-      "edgeToEdgeEnabled": true
+      "edgeToEdgeEnabled": true,
+      "package": "com.scrivox.app",
+      "permissions": [
+        "RECORD_AUDIO"
+      ]
     },
     "web": {
-      "favicon": "./assets/favicon.png"
-    }
+      "favicon": "./assets/favicon.png",
+      "bundler": "metro"
+    },
+    "plugins": [
+      [
+        "expo-font",
+        {
+          "fonts": [
+            "./assets/fonts/Caveat-Regular.ttf",
+            "./assets/fonts/Kalam-Regular.ttf",
+            "./assets/fonts/HomemadeApple-Regular.ttf",
+            "./assets/fonts/IndieFlower-Regular.ttf",
+            "./assets/fonts/ShadowsIntoLight-Regular.ttf",
+            "./assets/fonts/PatrickHand-Regular.ttf",
+            "./assets/fonts/ArchitectsDaughter-Regular.ttf",
+            "./assets/fonts/RockSalt-Regular.ttf"
+          ]
+        }
+      ],
+      "expo-router"
+    ]
   }
 }
