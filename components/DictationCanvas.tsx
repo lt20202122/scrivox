@@ -108,8 +108,11 @@ export default function DictationCanvas({ notebookMode = false, scrollable = tru
 
   const { width } = useWindowDimensions();
   const scrollRef = useRef<ScrollView>(null);
-  const canvasHeight = notebookMode ? 842 : undefined;
-  const canvasWidth = notebookMode ? Math.min(595, width - 32) : undefined;
+  // A4 at 96dpi: 794×1123px; keep exact aspect ratio, fit to screen
+  const a4Scale = notebookMode ? Math.min(1, (width - 32) / 595) : 1;
+  const canvasHeight = notebookMode ? Math.round(842 * a4Scale) : undefined;
+  const canvasWidth = notebookMode ? Math.round(595 * a4Scale) : undefined;
+  const notebookLineSpacing = 32 * a4Scale;
 
   const startRecording = useCallback(async () => {
     if (!Voice) return;
@@ -179,7 +182,12 @@ export default function DictationCanvas({ notebookMode = false, scrollable = tru
         },
       ]}
     >
-      {paperStyle === 'lined' && <LinedPaper height={canvasHeight ?? 1200} lineSpacing={fontSize * 1.8} />}
+      {paperStyle === 'lined' && (
+        <LinedPaper
+          height={canvasHeight ?? 1200}
+          lineSpacing={notebookMode ? notebookLineSpacing : fontSize * 1.8}
+        />
+      )}
       {paperStyle === 'dotgrid' && (
         <DotGrid
           height={canvasHeight ?? 1200}

@@ -20,7 +20,7 @@ export default function DocumentScreen() {
     >
       <DictationCanvas
         notebookMode={appMode === 'notebook'}
-        scrollable
+        scrollable={appMode !== 'notebook'}
         onExport={handleExport}
       />
     </View>

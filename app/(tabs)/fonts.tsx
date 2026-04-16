@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, FlatList, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, Text, TouchableOpacity, FlatList, StyleSheet, useWindowDimensions, ListRenderItemInfo } from 'react-native';
 import { useAppStore, FONT_LABELS, FontKey } from '../../store/useAppStore';
 
 const SAMPLE = 'The quick brown fox';
@@ -39,12 +39,12 @@ export default function FontsScreen() {
     <View style={styles.container} accessibilityLabel="Font gallery screen">
       <FlatList
         data={FONT_KEYS}
-        keyExtractor={(item) => item}
+        keyExtractor={(item: FontKey) => item}
         numColumns={numCols}
         key={numCols}
         contentContainerStyle={styles.list}
         columnWrapperStyle={numCols > 1 ? styles.row : undefined}
-        renderItem={({ item }) => (
+        renderItem={({ item }: ListRenderItemInfo<FontKey>) => (
           <FontCard
             fontKey={item}
             selected={selectedFont === item}
