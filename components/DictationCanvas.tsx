@@ -8,7 +8,13 @@ import {
   useWindowDimensions,
   Platform,
 } from 'react-native';
-import Animated, { FadeIn } from 'react-native-reanimated';
+import Animated, {
+  FadeInDown,
+  useSharedValue,
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
+import * as Haptics from 'expo-haptics';
 import { useAppStore, PaperStyle } from '../store/useAppStore';
 
 let Voice: typeof import('@react-native-voice/voice').default | null = null;
@@ -25,6 +31,11 @@ const PAPER_BACKGROUNDS: Record<PaperStyle, string> = {
   parchment: '#F5F0E8',
 };
 
+const DARK_BG = '#1a1e2e';
+const DARK_LINE_COLOUR = 'rgba(255,255,255,0.08)';
+const DARK_DOT_COLOUR = 'rgba(255,255,255,0.1)';
+const DARK_DEFAULT_INK = '#e8dfc8';
+
 interface WordProps {
   word: string;
   fontFamily: string;
@@ -33,10 +44,23 @@ interface WordProps {
 }
 
 function AnimatedWord({ word, fontFamily, fontSize, inkColour }: WordProps) {
+  // Stable per-word random values for organic handwriting feel
+  const rotation = (Math.random() - 0.5) * 3.5;    // -1.75° to +1.75°
+  const translateY = (Math.random() - 0.5) * 2.5;  // -1.25 to +1.25px
+  const scale = 0.97 + Math.random() * 0.06;        // 0.97 to 1.03
+
   return (
     <Animated.Text
-      entering={FadeIn.duration(300)}
-      style={[styles.wordText, { fontFamily, fontSize, color: inkColour }]}
+      entering={FadeInDown.duration(250).springify()}
+      style={[
+        styles.wordText,
+        {
+          fontFamily,
+          fontSize,
+          color: inkColour,
+          transform: [{ rotate: `${rotation}deg` }, { translateY }, { scale }],
+        },
+      ]}
       accessibilityLabel={word}
     >
       {word}{' '}
@@ -47,9 +71,10 @@ function AnimatedWord({ word, fontFamily, fontSize, inkColour }: WordProps) {
 interface LinedPaperProps {
   height: number;
   lineSpacing: number;
+  lineColour?: string;
 }
 
-function LinedPaper({ height, lineSpacing }: LinedPaperProps) {
+function LinedPaper({ height, lineSpacing, lineColour = 'rgba(180,160,120,0.3)' }: LinedPaperProps) {
   const lines = Math.ceil(height / lineSpacing);
   return (
     <View style={StyleSheet.absoluteFill} pointerEvents="none">
@@ -58,7 +83,7 @@ function LinedPaper({ height, lineSpacing }: LinedPaperProps) {
           key={i}
           style={[
             styles.paperLine,
-            { top: lineSpacing * (i + 1) },
+            { top: lineSpacing * (i + 1), backgroundColor: lineColour },
           ]}
         />
       ))}
@@ -66,7 +91,15 @@ function LinedPaper({ height, lineSpacing }: LinedPaperProps) {
   );
 }
 
-function DotGrid({ height, width }: { height: number; width: number }) {
+function DotGrid({
+  height,
+  width,
+  dotColour = 'rgba(180,160,120,0.35)',
+}: {
+  height: number;
+  width: number;
+  dotColour?: string;
+}) {
   const spacing = 24;
   const rows = Math.ceil(height / spacing);
   const cols = Math.ceil(width / spacing);
@@ -76,14 +109,56 @@ function DotGrid({ height, width }: { height: number; width: number }) {
         Array.from({ length: cols }).map((_, c) => (
           <View
             key={`${r}-${c}`}
-            style={[styles.dot, { top: r * spacing + 12, left: c * spacing + 12 }]}
+            style={[styles.dot, { top: r * spacing + 12, left: c * spacing + 12, backgroundColor: dotColour }]}
           />
-        ))
+        )),
       )}
     </View>
   );
 }
 
+// ---------------------------------------------------------------------------
+// WaveformBars — animated bars shown while recording
+// ---------------------------------------------------------------------------
+function WaveformBars({ isRecording }: { isRecording: boolean }) {
+  const bar0 = useSharedValue(0.3);
+  const bar1 = useSharedValue(0.6);
+  const bar2 = useSharedValue(0.4);
+  const bars = [bar0, bar1, bar2];
+
+  useEffect(() => {
+    if (!isRecording) {
+      bar0.value = withSpring(0.3);
+      bar1.value = withSpring(0.3);
+      bar2.value = withSpring(0.3);
+      return;
+    }
+    const intervals = bars.map((bar, i) =>
+      setInterval(() => {
+        bar.value = withSpring(0.2 + Math.random() * 0.8);
+      }, 150 + i * 50),
+    );
+    return () => intervals.forEach(clearInterval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isRecording]);
+
+  const style0 = useAnimatedStyle(() => ({ height: bar0.value * 24, backgroundColor: '#8b6914' }));
+  const style1 = useAnimatedStyle(() => ({ height: bar1.value * 24, backgroundColor: '#8b6914' }));
+  const style2 = useAnimatedStyle(() => ({ height: bar2.value * 24, backgroundColor: '#8b6914' }));
+  const barStyles = [style0, style1, style2];
+
+  return (
+    <View style={{ flexDirection: 'row', gap: 3, alignItems: 'center', height: 24 }}>
+      {barStyles.map((style, i) => (
+        <Animated.View key={i} style={[{ width: 3, borderRadius: 2 }, style]} />
+      ))}
+    </View>
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Main component
+// ---------------------------------------------------------------------------
 interface Props {
   notebookMode?: boolean;
   scrollable?: boolean;
@@ -99,6 +174,7 @@ export default function DictationCanvas({ notebookMode = false, scrollable = tru
     transcribedText,
     partialText,
     isRecording,
+    darkMode,
     setTranscribedText,
     setPartialText,
     setIsRecording,
@@ -108,14 +184,24 @@ export default function DictationCanvas({ notebookMode = false, scrollable = tru
 
   const { width } = useWindowDimensions();
   const scrollRef = useRef<ScrollView>(null);
-  // A4 at 96dpi: 794×1123px; keep exact aspect ratio, fit to screen
   const a4Scale = notebookMode ? Math.min(1, (width - 32) / 595) : 1;
   const canvasHeight = notebookMode ? Math.round(842 * a4Scale) : undefined;
   const canvasWidth = notebookMode ? Math.round(595 * a4Scale) : undefined;
   const notebookLineSpacing = 32 * a4Scale;
 
+  // Resolve colours for dark mode
+  const resolvedInk = darkMode && inkColour === '#1a1a1a' ? DARK_DEFAULT_INK : inkColour;
+  const bgColour = darkMode ? DARK_BG : PAPER_BACKGROUNDS[paperStyle];
+  const lineColour = darkMode ? DARK_LINE_COLOUR : 'rgba(180,160,120,0.3)';
+  const dotColour = darkMode ? DARK_DOT_COLOUR : 'rgba(180,160,120,0.35)';
+  const toolbarBg = darkMode ? '#111520' : '#F5F0E8';
+  const toolbarBorder = darkMode ? '#2a2e3e' : '#d4c9b8';
+
   const startRecording = useCallback(async () => {
     if (!Voice) return;
+    try {
+      await Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    } catch { /* haptics unavailable */ }
     try {
       await Voice.start('en-US');
       setIsRecording(true);
@@ -126,6 +212,9 @@ export default function DictationCanvas({ notebookMode = false, scrollable = tru
 
   const stopRecording = useCallback(async () => {
     if (!Voice) return;
+    try {
+      await Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    } catch { /* haptics unavailable */ }
     try {
       await Voice.stop();
       setIsRecording(false);
@@ -169,7 +258,6 @@ export default function DictationCanvas({ notebookMode = false, scrollable = tru
   }, [appendText, setPartialText, setIsRecording]);
 
   const words = transcribedText ? transcribedText.split(/\s+/).filter(Boolean) : [];
-  const bgColour = PAPER_BACKGROUNDS[paperStyle];
 
   const canvasContent = (
     <View
@@ -186,12 +274,14 @@ export default function DictationCanvas({ notebookMode = false, scrollable = tru
         <LinedPaper
           height={canvasHeight ?? 1200}
           lineSpacing={notebookMode ? notebookLineSpacing : fontSize * 1.8}
+          lineColour={lineColour}
         />
       )}
       {paperStyle === 'dotgrid' && (
         <DotGrid
           height={canvasHeight ?? 1200}
           width={canvasWidth ?? width - 32}
+          dotColour={dotColour}
         />
       )}
 
@@ -203,14 +293,14 @@ export default function DictationCanvas({ notebookMode = false, scrollable = tru
               word={word}
               fontFamily={selectedFont}
               fontSize={fontSize}
-              inkColour={inkColour}
+              inkColour={resolvedInk}
             />
           ))}
           {partialText ? (
             <Text
               style={[
                 styles.partialText,
-                { fontFamily: selectedFont, fontSize, color: inkColour },
+                { fontFamily: selectedFont, fontSize, color: resolvedInk },
               ]}
               accessibilityLabel="Partial speech recognition result"
             >
@@ -221,7 +311,7 @@ export default function DictationCanvas({ notebookMode = false, scrollable = tru
             <Text
               style={[
                 styles.placeholder,
-                { fontFamily: selectedFont, fontSize },
+                { fontFamily: selectedFont, fontSize, color: darkMode ? '#6a7080' : '#c4b89a' },
               ]}
               accessibilityLabel="Tap the microphone button to start dictating"
             >
@@ -234,7 +324,7 @@ export default function DictationCanvas({ notebookMode = false, scrollable = tru
   );
 
   return (
-    <View style={styles.container}>
+    <View style={[styles.container, darkMode && { backgroundColor: DARK_BG }]}>
       {scrollable ? (
         <ScrollView
           ref={scrollRef}
@@ -248,7 +338,8 @@ export default function DictationCanvas({ notebookMode = false, scrollable = tru
         canvasContent
       )}
 
-      <View style={styles.toolbar}>
+      <View style={[styles.toolbar, { backgroundColor: toolbarBg, borderTopColor: toolbarBorder }]}>
+        {isRecording && <WaveformBars isRecording={isRecording} />}
         {onExport && (
           <TouchableOpacity
             style={styles.exportButton}
@@ -301,29 +392,25 @@ const styles = StyleSheet.create({
     left: 16,
     right: 16,
     height: 1,
-    backgroundColor: 'rgba(180,160,120,0.3)',
   },
   dot: {
     position: 'absolute',
     width: 3,
     height: 3,
     borderRadius: 1.5,
-    backgroundColor: 'rgba(180,160,120,0.35)',
   },
   textContainer: { flex: 1 },
   textWrapper: { flexWrap: 'wrap', flexDirection: 'row' },
   wordText: { lineHeight: 44 },
   partialText: { opacity: 0.45, lineHeight: 44 },
-  placeholder: { color: '#c4b89a', lineHeight: 44 },
+  placeholder: { lineHeight: 44 },
   toolbar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
     paddingHorizontal: 20,
     paddingVertical: 12,
-    backgroundColor: '#F5F0E8',
     borderTopWidth: 1,
-    borderTopColor: '#d4c9b8',
     gap: 12,
   },
   exportButton: {

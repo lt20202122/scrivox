@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet, useWindowDimensions } from 'react-native';
+import { View, Text, TouchableOpacity, Switch, StyleSheet, useWindowDimensions } from 'react-native';
 import { useAppStore, INK_COLOURS, InkColour, PaperStyle } from '../../store/useAppStore';
 
 const PAPER_STYLES: { key: PaperStyle; label: string; icon: string }[] = [
@@ -16,14 +16,39 @@ export default function SettingsScreen() {
     setFontSize,
     paperStyle,
     setPaperStyle,
+    darkMode,
+    toggleDarkMode,
   } = useAppStore();
   const { width } = useWindowDimensions();
   const isTablet = width > 600;
 
+  const bg = darkMode ? '#1a1e2e' : '#F5F0E8';
+  const text = darkMode ? '#e8dfc8' : '#3a2e1e';
+  const sectionText = darkMode ? '#a09880' : '#8b6914';
+  const cardBg = darkMode ? '#252a3a' : '#fffcf5';
+  const cardBorder = darkMode ? '#3a3e50' : '#e8e0d0';
+  const cardSelectedBg = darkMode ? '#2e3248' : '#fff8e7';
+  const cardSelectedBorder = darkMode ? '#8b6914' : '#8b6914';
+
   return (
-    <View style={styles.container} accessibilityLabel="Settings screen">
+    <View style={[styles.container, { backgroundColor: bg }]} accessibilityLabel="Settings screen">
       <View style={[styles.content, isTablet && styles.contentTablet]}>
-        <Text style={styles.sectionTitle} accessibilityLabel="Ink colour section">
+
+        {/* Dark Mode */}
+        <Text style={[styles.sectionTitle, { color: sectionText }]}>Appearance</Text>
+        <View style={[styles.toggleRow, { backgroundColor: cardBg, borderColor: cardBorder }]}>
+          <Text style={[styles.toggleLabel, { color: text }]}>Dark Mode (Chalkboard)</Text>
+          <Switch
+            value={darkMode}
+            onValueChange={toggleDarkMode}
+            trackColor={{ false: '#d4c9b8', true: '#8b6914' }}
+            thumbColor={darkMode ? '#fff8e7' : '#fff'}
+            accessibilityLabel="Toggle dark mode"
+          />
+        </View>
+
+        {/* Ink Colour */}
+        <Text style={[styles.sectionTitle, { color: sectionText }]} accessibilityLabel="Ink colour section">
           Ink Colour
         </Text>
         <View style={styles.colourRow}>
@@ -43,7 +68,8 @@ export default function SettingsScreen() {
           ))}
         </View>
 
-        <Text style={styles.sectionTitle} accessibilityLabel="Font size section">
+        {/* Font Size */}
+        <Text style={[styles.sectionTitle, { color: sectionText }]} accessibilityLabel="Font size section">
           Font Size: {fontSize}pt
         </Text>
         <View style={styles.sizeRow}>
@@ -57,7 +83,7 @@ export default function SettingsScreen() {
             <Text style={styles.sizeButtonText}>−</Text>
           </TouchableOpacity>
           <Text
-            style={[styles.fontPreviewText, { fontFamily: 'Caveat-Regular', fontSize }]}
+            style={[styles.fontPreviewText, { fontFamily: 'Caveat-Regular', fontSize, color: text }]}
             accessibilityLabel={`Current font size ${fontSize} points preview`}
           >
             Aa
@@ -73,7 +99,8 @@ export default function SettingsScreen() {
           </TouchableOpacity>
         </View>
 
-        <Text style={styles.sectionTitle} accessibilityLabel="Paper style section">
+        {/* Paper Style */}
+        <Text style={[styles.sectionTitle, { color: sectionText }]} accessibilityLabel="Paper style section">
           Paper Style
         </Text>
         <View style={[styles.paperRow, isTablet && styles.paperRowTablet]}>
@@ -82,7 +109,8 @@ export default function SettingsScreen() {
               key={key}
               style={[
                 styles.paperCard,
-                paperStyle === key && styles.paperCardSelected,
+                { backgroundColor: cardBg, borderColor: cardBorder },
+                paperStyle === key && { backgroundColor: cardSelectedBg, borderColor: cardSelectedBorder },
               ]}
               onPress={() => setPaperStyle(key)}
               accessibilityLabel={`Set paper style to ${label}`}
@@ -93,7 +121,8 @@ export default function SettingsScreen() {
               <Text
                 style={[
                   styles.paperLabel,
-                  paperStyle === key && styles.paperLabelSelected,
+                  { color: darkMode ? '#8a7a62' : '#7a6a52' },
+                  paperStyle === key && { color: '#8b6914', fontWeight: '700' },
                 ]}
               >
                 {label}
@@ -107,16 +136,26 @@ export default function SettingsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#F5F0E8' },
+  container: { flex: 1 },
   content: { padding: 24 },
   contentTablet: { paddingHorizontal: 64 },
   sectionTitle: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#3a2e1e',
     marginBottom: 14,
     marginTop: 24,
   },
+  toggleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingVertical: 12,
+    borderRadius: 14,
+    borderWidth: 1.5,
+    marginBottom: 4,
+  },
+  toggleLabel: { fontSize: 15, fontWeight: '500' },
   colourRow: { flexDirection: 'row', gap: 14, flexWrap: 'wrap', marginBottom: 8 },
   colourSwatch: {
     width: 44,
@@ -146,21 +185,17 @@ const styles = StyleSheet.create({
   },
   sizeButtonDisabled: { backgroundColor: '#d4c9b8' },
   sizeButtonText: { color: '#fff', fontSize: 22, fontWeight: '700', lineHeight: 26 },
-  fontPreviewText: { color: '#3a2e1e', minWidth: 60, textAlign: 'center' },
+  fontPreviewText: { minWidth: 60, textAlign: 'center' },
   paperRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
   paperRowTablet: { gap: 16 },
   paperCard: {
     paddingHorizontal: 20,
     paddingVertical: 14,
-    backgroundColor: '#fffcf5',
     borderRadius: 14,
     borderWidth: 2,
-    borderColor: '#e8e0d0',
     alignItems: 'center',
     minWidth: 80,
   },
-  paperCardSelected: { borderColor: '#8b6914', backgroundColor: '#fff8e7' },
   paperIcon: { fontSize: 22, marginBottom: 4 },
-  paperLabel: { fontSize: 13, color: '#7a6a52', fontWeight: '500' },
-  paperLabelSelected: { color: '#8b6914', fontWeight: '700' },
+  paperLabel: { fontSize: 13, fontWeight: '500' },
 });

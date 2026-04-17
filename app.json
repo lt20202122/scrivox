@@ -21,7 +21,9 @@
         "NSSpeechRecognitionUsageDescription": "Scrivox uses speech recognition to transcribe your voice into text."
       },
       "entitlements": {
-        "com.apple.security.application-groups": ["group.com.scrivox.app"]
+        "com.apple.security.application-groups": [
+          "group.com.scrivox.app"
+        ]
       }
     },
     "android": {
@@ -56,6 +58,13 @@
         }
       ],
       "expo-router"
-    ]
+    ],
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "f15e1449-4247-42a5-8be6-52138f3b35df"
+      }
+    },
+    "owner": "lassethoroe10"
   }
 }
