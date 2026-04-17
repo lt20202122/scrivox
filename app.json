@@ -19,6 +19,9 @@
       "infoPlist": {
         "NSMicrophoneUsageDescription": "Scrivox uses the microphone to convert your speech into handwriting-style text.",
         "NSSpeechRecognitionUsageDescription": "Scrivox uses speech recognition to transcribe your voice into text."
+      },
+      "entitlements": {
+        "com.apple.security.application-groups": ["group.com.scrivox.app"]
       }
     },
     "android": {
