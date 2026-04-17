@@ -1,14 +1,8 @@
 import { create } from 'zustand';
+import { CustomFont } from '../services/fontStorage';
 
-export type FontKey =
-  | 'Caveat-Regular'
-  | 'Kalam-Regular'
-  | 'HomemadeApple-Regular'
-  | 'IndieFlower-Regular'
-  | 'ShadowsIntoLight-Regular'
-  | 'PatrickHand-Regular'
-  | 'ArchitectsDaughter-Regular'
-  | 'RockSalt-Regular';
+// FontKey is now a plain string to support dynamic custom font keys
+export type FontKey = string;
 
 export type AppMode = 'quick' | 'document' | 'notebook';
 export type PaperStyle = 'blank' | 'lined' | 'dotgrid' | 'parchment';
@@ -23,6 +17,8 @@ export interface AppState {
   transcribedText: string;
   partialText: string;
   isRecording: boolean;
+  customFonts: CustomFont[];
+  darkMode: boolean;
 
   setSelectedFont: (font: FontKey) => void;
   setInkColour: (colour: InkColour) => void;
@@ -34,9 +30,24 @@ export interface AppState {
   setIsRecording: (recording: boolean) => void;
   appendText: (text: string) => void;
   clearText: () => void;
+  setCustomFonts: (fonts: CustomFont[]) => void;
+  addCustomFont: (font: CustomFont) => void;
+  removeCustomFont: (key: string) => void;
+  toggleDarkMode: () => void;
 }
 
-export const FONT_LABELS: Record<FontKey, string> = {
+export const PRESET_FONT_KEYS: FontKey[] = [
+  'Caveat-Regular',
+  'Kalam-Regular',
+  'HomemadeApple-Regular',
+  'IndieFlower-Regular',
+  'ShadowsIntoLight-Regular',
+  'PatrickHand-Regular',
+  'ArchitectsDaughter-Regular',
+  'RockSalt-Regular',
+];
+
+export const FONT_LABELS: Record<string, string> = {
   'Caveat-Regular': 'Caveat',
   'Kalam-Regular': 'Kalam',
   'HomemadeApple-Regular': 'Homemade Apple',
@@ -65,6 +76,8 @@ export const useAppStore = create<AppState>((set) => ({
   transcribedText: '',
   partialText: '',
   isRecording: false,
+  customFonts: [],
+  darkMode: false,
 
   setSelectedFont: (font) => set({ selectedFont: font }),
   setInkColour: (colour) => set({ inkColour: colour }),
@@ -81,4 +94,10 @@ export const useAppStore = create<AppState>((set) => ({
         : text,
     })),
   clearText: () => set({ transcribedText: '', partialText: '' }),
+  setCustomFonts: (fonts) => set({ customFonts: fonts }),
+  addCustomFont: (font) =>
+    set((state) => ({ customFonts: [...state.customFonts, font] })),
+  removeCustomFont: (key) =>
+    set((state) => ({ customFonts: state.customFonts.filter((f) => f.key !== key) })),
+  toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
 }));
