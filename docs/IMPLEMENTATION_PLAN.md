@@ -204,3 +204,40 @@ const fullText = result.blocks.map(b => b.text).join('\n');
 - **App Store keyboard extension approval**: Apple requires `RequestsOpenAccess` justification. Network STT requires it — must have clear privacy policy.
 - **GoodNotes font legibility**: If personal font generation quality is low, it won't fool anyone. Quality bar is high for the homework use case. May need to post-process TTF (add variants, smooth curves) before considering it "done".
 - **`react-native-html-to-pdf` on Android**: Known issues with custom fonts in WebView renderer. May need to use `react-native-pdf-lib` or a canvas→image→PDF approach instead.
+
+---
+
+## Implementation Notes
+
+### What was built (Phases 1 & 2)
+
+**Phase 1 — Core dictation + font rendering**
+- Expo Router v4 set up with file-based tabs navigation (`(tabs)/index`, `(tabs)/fonts`, `(tabs)/settings`) and modal/stack screens (`dictation/document`, `dictation/quick`).
+- 8 Google Fonts TTFs bundled: Caveat, Kalam, Homemade Apple, Indie Flower, Shadows Into Light, Patrick Hand, Architects Daughter, Rock Salt — all loaded via `expo-font` in the root layout.
+- Zustand store manages: selected font, ink colour (6 presets), font size, app mode, paper style, transcription state.
+- `DictationCanvas` component: STT via `@react-native-voice/voice` (property-based callback API), word-by-word `FadeIn` animation via `react-native-reanimated`, partial-result text shown at reduced opacity, parchment background, lined/dot-grid paper overlays.
+- **Home screen**: mode selector cards (Quick / Document / Notebook) → navigates to correct screen.
+- **Font gallery**: FlatList grid with live font preview, tap to select.
+- **Settings**: ink colour swatches, font size +/− buttons (no native slider dependency), paper style grid.
+
+**Phase 2 — Export modes + app modes**
+- `export/preview.tsx`: ViewShot capture for PNG save/share/clipboard; PDF via `react-native-html-to-pdf` `generatePDF` (new v1.3 API); base64 clipboard copy via `captureRef`; share sheet via `expo-sharing`.
+- **Notebook mode**: A4 canvas (595×842pt scaled to screen), lined paper with 32pt GoodNotes-default spacing; scrolling disabled (fixed page).
+- **Document mode**: full-screen scrollable canvas; auto-scrolls to latest text.
+- **Quick mode**: modal screen with compact canvas + one-tap copy/share actions.
+- `dicatation/quick.tsx` also includes inline share-as-image via ViewShot.
+
+### Deviations from plan
+- **Font size slider**: replaced with +/− buttons to avoid `@react-native-community/slider` (requires native module not in Expo Go). Functionally equivalent.
+- **`react-native-html-to-pdf`**: new v1.3 uses named export `generatePDF` rather than the old class-based `RNHTMLtoPDF.convert()`. PDF export wrapped in try/catch — shows user-friendly error if called from Expo Go (native module unavailable until EAS build).
+- **`expo-file-system` v55**: new class-based API; switched to `captureRef(..., { result: 'base64' })` from ViewShot to get base64 for clipboard without touching the file system.
+- **`@react-native-voice/voice`**: wrapped in `try/catch` require — degrades gracefully in JS-only environments (Expo Web, Jest). STT callbacks wired via property setters (`Voice.onSpeechResults = fn`).
+- **NativeWind**: not installed — opted for StyleSheet throughout to keep bundle lean and avoid potential Expo Go compatibility issues.
+
+### What Phase 3 needs to know
+- All native-module-dependent features (`@react-native-voice/voice`, `react-native-html-to-pdf`, `react-native-view-shot`) need a development build (EAS Build) to work on device; they are wrapped defensively for Expo Go testing.
+- Run `npx expo prebuild` before Phase 3 to add `ios/` and `android/` directories.
+- `@react-native-ml-kit/text-recognition` (Phase 3 OCR) requires bare workflow — install after prebuild.
+- Personal font pipeline (Calligraphr) should be treated as optional; investigate public API availability before starting.
+- Bundle identifier is `com.scrivox.app`; add mic + speech-recognition `InfoPlist` entries in `app.json` before building (already present in current `app.json`).
+- Zustand store may need persistence (`zustand/middleware` `persist` with `expo-secure-store`) for saved font preferences.
