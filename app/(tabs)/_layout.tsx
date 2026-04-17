@@ -31,6 +31,13 @@ export default function TabsLayout() {
         }}
       />
       <Tabs.Screen
+        name="ocr"
+        options={{
+          title: 'Scan',
+          tabBarIcon: () => <TabIcon label="📷" />,
+        }}
+      />
+      <Tabs.Screen
         name="settings"
         options={{
           title: 'Settings',
