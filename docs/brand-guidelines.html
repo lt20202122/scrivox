@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Scrivox — Brand Guidelines</title>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@400;600;700&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --ink:        #1C1F2E;
+    --amber:      #C4922A;
+    --amber-light:#F0C060;
+    --parchment:  #F0EBE0;
+    --base:       #FAFAF7;
+    --muted:      #6B6560;
+    --border:     #E4DDD4;
+    --dark-bg:    #0F1117;
+    --dark-surface:#1A1D26;
+    --dark-amber: #D4A030;
+    --radius-sm:  8px;
+    --radius-md:  12px;
+    --radius-lg:  20px;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--base);
+    color: var(--ink);
+    line-height: 1.6;
+    padding: 0 0 80px;
+  }
+
+  /* ─── Cover ─── */
+  .cover {
+    background: var(--ink);
+    color: white;
+    padding: 80px 64px 64px;
+    position: relative;
+    overflow: hidden;
+  }
+  .cover::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 80% 50%, rgba(196,146,42,0.18) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .cover-logo {
+    font-family: 'Caveat', cursive;
+    font-size: 72px;
+    font-weight: 700;
+    color: var(--amber);
+    letter-spacing: -1px;
+    line-height: 1;
+    margin-bottom: 12px;
+  }
+  .cover-tagline {
+    font-family: 'Lora', serif;
+    font-size: 20px;
+    color: rgba(255,255,255,0.7);
+    font-style: italic;
+    margin-bottom: 48px;
+  }
+  .cover-meta {
+    font-size: 12px;
+    color: rgba(255,255,255,0.4);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  /* ─── Layout ─── */
+  .page { max-width: 900px; margin: 0 auto; padding: 0 40px; }
+  .section { padding: 64px 0 0; }
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 8px;
+  }
+  .section-title {
+    font-family: 'Lora', serif;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--ink);
+    margin-bottom: 32px;
+    line-height: 1.2;
+  }
+  hr.divider {
+    border: none;
+    border-top: 1px solid var(--border);
+    margin: 64px 0 0;
+  }
+
+  /* ─── Color Palette ─── */
+  .palette-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .swatch {
+    border-radius: var(--radius-md);
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .swatch-color {
+    height: 100px;
+    width: 100%;
+  }
+  .swatch-info {
+    padding: 12px 14px;
+    background: white;
+    border-top: 1px solid var(--border);
+  }
+  .swatch-name { font-weight: 600; font-size: 13px; color: var(--ink); }
+  .swatch-hex  { font-size: 11px; color: var(--muted); font-family: monospace; margin-top: 2px; }
+  .swatch-use  { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .palette-dark {
+    background: var(--dark-bg);
+    border-radius: var(--radius-lg);
+    padding: 32px;
+    margin-top: 16px;
+  }
+  .palette-dark .palette-sub-title {
+    font-family: 'Lora', serif;
+    font-size: 18px;
+    color: white;
+    margin-bottom: 20px;
+  }
+  .dark-swatch {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 16px 12px 0;
+  }
+  .dark-dot {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    border: 1px solid rgba(255,255,255,0.1);
+  }
+  .dark-swatch-info { line-height: 1.4; }
+  .dark-swatch-name { font-size: 13px; font-weight: 600; color: white; }
+  .dark-swatch-hex  { font-size: 11px; color: rgba(255,255,255,0.4); font-family: monospace; }
+
+  /* ─── Typography ─── */
+  .type-specimen {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 32px 36px;
+    margin-bottom: 20px;
+  }
+  .type-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 6px;
+  }
+  .type-meta {
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .type-display {
+    font-family: 'Caveat', cursive;
+    font-size: 56px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .type-heading {
+    font-family: 'Lora', serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--ink);
+    line-height: 1.2;
+  }
+  .type-heading-sm {
+    font-family: 'Lora', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1.3;
+    margin-top: 8px;
+  }
+  .type-body {
+    font-family: 'Inter', sans-serif;
+    font-size: 16px;
+    color: var(--ink);
+    line-height: 1.7;
+  }
+  .type-body-sm {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-top: 6px;
+  }
+  .type-ui {
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--ink);
+    margin-top: 8px;
+  }
+  .type-sizes {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 16px;
+  }
+  .type-size-row {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+  }
+  .type-size-label {
+    font-size: 11px;
+    color: var(--muted);
+    font-family: monospace;
+    width: 60px;
+    flex-shrink: 0;
+  }
+
+  /* ─── Logo ─── */
+  .logo-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  .logo-variant {
+    border-radius: var(--radius-lg);
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 180px;
+  }
+  .logo-variant.light { background: white; border: 1px solid var(--border); }
+  .logo-variant.dark  { background: var(--ink); }
+  .logo-variant.parch { background: var(--parchment); border: 1px solid var(--border); }
+  .logo-variant.amber { background: var(--amber); }
+
+  .logo-wordmark {
+    font-family: 'Caveat', cursive;
+    font-size: 48px;
+    font-weight: 700;
+    line-height: 1;
+  }
+  .logo-wordmark.on-light { color: var(--ink); }
+  .logo-wordmark.on-dark  { color: var(--amber); }
+  .logo-wordmark.on-amber { color: white; }
+
+  .logo-tag {
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+  }
+  .logo-tag.on-light { color: var(--muted); }
+  .logo-tag.on-dark  { color: rgba(255,255,255,0.5); }
+  .logo-tag.on-amber { color: rgba(255,255,255,0.8); }
+
+  .logo-note {
+    font-size: 12px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  /* ─── UI Components ─── */
+  .components-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .component-card {
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+  }
+  .component-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 20px;
+  }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ink);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 10px;
+  }
+  .btn-amber {
+    display: inline-flex;
+    align-items: center;
+    background: var(--amber);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    font-family: 'Inter', sans-serif;
+    margin-bottom: 10px;
+    margin-left: 8px;
+  }
+  .btn-ghost {
+    display: inline-flex;
+    align-items: center;
+    background: transparent;
+    color: var(--ink);
+    padding: 11px 23px;
+    border-radius: 100px;
+    font-size: 14px;
+    font-weight: 600;
+    border: 1.5px solid var(--border);
+    font-family: 'Inter', sans-serif;
+    margin-left: 8px;
+  }
+  .card-example {
+    background: var(--parchment);
+    border-radius: var(--radius-md);
+    padding: 20px 22px;
+    margin-top: 4px;
+  }
+  .card-example-title {
+    font-family: 'Lora', serif;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 6px;
+  }
+  .card-example-body {
+    font-size: 13px;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .input-example {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    color: var(--ink);
+    background: white;
+    outline: none;
+    margin-bottom: 8px;
+  }
+  .input-example:focus { border-color: var(--amber); }
+  .badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 100px;
+    font-size: 11px;
+    font-weight: 600;
+    background: rgba(196,146,42,0.12);
+    color: var(--amber);
+    margin-right: 6px;
+  }
+  .badge.dark {
+    background: rgba(28,31,46,0.08);
+    color: var(--ink);
+  }
+
+  /* ─── Spacing ─── */
+  .spacing-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 16px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+  .spacing-block {
+    background: rgba(196,146,42,0.25);
+    border: 1.5px solid var(--amber);
+    border-radius: 3px;
+  }
+  .spacing-label {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    font-family: monospace;
+  }
+
+  /* ─── Tone ─── */
+  .tone-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .tone-card {
+    border-radius: var(--radius-md);
+    padding: 20px 22px;
+    border: 1px solid var(--border);
+  }
+  .tone-card.do   { border-left: 4px solid #2e7d32; background: #f1f8e9; }
+  .tone-card.dont { border-left: 4px solid #c62828; background: #fce4ec; }
+  .tone-card-label {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+  }
+  .tone-card.do   .tone-card-label { color: #2e7d32; }
+  .tone-card.dont .tone-card-label { color: #c62828; }
+  .tone-card p { font-size: 13px; color: var(--ink); margin-bottom: 6px; line-height: 1.5; }
+  .tone-example {
+    background: white;
+    border-radius: 6px;
+    padding: 10px 12px;
+    font-size: 13px;
+    font-style: italic;
+    color: var(--muted);
+    margin-top: 10px;
+    border: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<!-- Cover -->
+<div class="cover">
+  <div class="page">
+    <div class="cover-logo">Scrivox</div>
+    <div class="cover-tagline">Your voice. Your handwriting.</div>
+    <div class="cover-meta">Brand Guidelines · v1.0 · 2025</div>
+  </div>
+</div>
+
+<div class="page">
+
+  <!-- ─── Color Palette ─── -->
+  <div class="section">
+    <div class="section-label">01 — Color</div>
+    <div class="section-title">Palette</div>
+
+    <div class="palette-grid">
+      <div class="swatch">
+        <div class="swatch-color" style="background:#1C1F2E;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Ink</div>
+          <div class="swatch-hex">#1C1F2E</div>
+          <div class="swatch-use">Primary text, backgrounds, logo</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#C4922A;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Amber</div>
+          <div class="swatch-hex">#C4922A</div>
+          <div class="swatch-use">CTAs, accents, highlights</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#F0EBE0; border-top: 1px solid #e4ddd4;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Parchment</div>
+          <div class="swatch-hex">#F0EBE0</div>
+          <div class="swatch-use">Canvas backgrounds, cards</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#FAFAF7; border-top: 1px solid #e4ddd4;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Base</div>
+          <div class="swatch-hex">#FAFAF7</div>
+          <div class="swatch-use">Page background</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#6B6560;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Muted</div>
+          <div class="swatch-hex">#6B6560</div>
+          <div class="swatch-use">Captions, secondary text</div>
+        </div>
+      </div>
+      <div class="swatch">
+        <div class="swatch-color" style="background:#E4DDD4; border-top: 1px solid #e4ddd4;"></div>
+        <div class="swatch-info">
+          <div class="swatch-name">Border</div>
+          <div class="swatch-hex">#E4DDD4</div>
+          <div class="swatch-use">Dividers, input borders</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="palette-dark">
+      <div class="palette-sub-title">Dark Mode — Chalkboard</div>
+      <div>
+        <div class="dark-swatch">
+          <div class="dark-dot" style="background:#0F1117;"></div>
+          <div class="dark-swatch-info">
+            <div class="dark-swatch-name">Dark BG</div>
+            <div class="dark-swatch-hex">#0F1117</div>
+          </div>
+        </div>
+        <div class="dark-swatch">
+          <div class="dark-dot" style="background:#1A1D26;"></div>
+          <div class="dark-swatch-info">
+            <div class="dark-swatch-name">Dark Surface</div>
+            <div class="dark-swatch-hex">#1A1D26</div>
+          </div>
+        </div>
+        <div class="dark-swatch">
+          <div class="dark-dot" style="background:#D4A030;"></div>
+          <div class="dark-swatch-info">
+            <div class="dark-swatch-name">Amber (Dark)</div>
+            <div class="dark-swatch-hex">#D4A030</div>
+          </div>
+        </div>
+        <div class="dark-swatch">
+          <div class="dark-dot" style="background:#EDE0C8;"></div>
+          <div class="dark-swatch-info">
+            <div class="dark-swatch-name">Ink (Dark)</div>
+            <div class="dark-swatch-hex">#EDE0C8</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ─── Typography ─── -->
+  <div class="section">
+    <div class="section-label">02 — Typography</div>
+    <div class="section-title">Type Scale</div>
+
+    <div class="type-specimen">
+      <div class="type-label">Display — Caveat</div>
+      <div class="type-meta">Hero text, logo, handwriting moments · Bold 700 · Use sparingly</div>
+      <div class="type-display">Scrivox</div>
+      <div style="font-family:'Caveat',cursive; font-size:36px; color:var(--amber); margin-top:4px;">Your voice. Your handwriting.</div>
+    </div>
+
+    <div class="type-specimen">
+      <div class="type-label">Heading — Lora</div>
+      <div class="type-meta">Section titles, feature names, marketing copy · 400 / 600 / 700</div>
+      <div class="type-heading">Speak naturally.</div>
+      <div class="type-heading-sm">See your words appear in handwriting.</div>
+    </div>
+
+    <div class="type-specimen">
+      <div class="type-label">Body — Inter</div>
+      <div class="type-meta">UI labels, descriptions, all functional text · 300 / 400 / 500 / 600</div>
+      <div class="type-body">Scrivox turns your voice into text rendered in a handwriting font — your own or one of eight curated styles. Export as image or A4 PDF, ready for GoodNotes.</div>
+      <div class="type-body-sm">Secondary text, captions, and metadata use Inter at 14px / weight 400 in Muted (#6B6560).</div>
+      <div class="type-ui">Button label · UI label · Navigation item</div>
+      <div class="type-sizes">
+        <div class="type-size-row"><span class="type-size-label">72px</span><span style="font-family:'Caveat',cursive;font-size:36px;font-weight:700;color:var(--ink)">Display Hero</span></div>
+        <div class="type-size-row"><span class="type-size-label">36px</span><span style="font-family:'Lora',serif;font-size:28px;font-weight:700;color:var(--ink)">H1 Section Title</span></div>
+        <div class="type-size-row"><span class="type-size-label">24px</span><span style="font-family:'Lora',serif;font-size:20px;font-weight:600;color:var(--ink)">H2 Subsection</span></div>
+        <div class="type-size-row"><span class="type-size-label">16px</span><span style="font-size:15px;color:var(--ink)">Body — regular reading text</span></div>
+        <div class="type-size-row"><span class="type-size-label">14px</span><span style="font-size:13px;color:var(--muted)">Small — captions, metadata</span></div>
+        <div class="type-size-row"><span class="type-size-label">11px</span><span style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--amber)">SECTION LABEL</span></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ─── Logo ─── -->
+  <div class="section">
+    <div class="section-label">03 — Logo</div>
+    <div class="section-title">Wordmark Variants</div>
+    <div class="logo-grid">
+      <div>
+        <div class="logo-variant light">
+          <div class="logo-wordmark on-light">Scrivox</div>
+          <div class="logo-tag on-light">Voice · Handwriting</div>
+        </div>
+        <div class="logo-note">Primary — on white / base</div>
+      </div>
+      <div>
+        <div class="logo-variant dark">
+          <div class="logo-wordmark on-dark">Scrivox</div>
+          <div class="logo-tag on-dark">Voice · Handwriting</div>
+        </div>
+        <div class="logo-note">Reversed — on dark / hero</div>
+      </div>
+      <div>
+        <div class="logo-variant parch">
+          <div class="logo-wordmark on-light">Scrivox</div>
+          <div class="logo-tag on-light">Voice · Handwriting</div>
+        </div>
+        <div class="logo-note">Parchment — app canvas context</div>
+      </div>
+      <div>
+        <div class="logo-variant amber">
+          <div class="logo-wordmark on-amber">Scrivox</div>
+          <div class="logo-tag on-amber">Voice · Handwriting</div>
+        </div>
+        <div class="logo-note">Amber — social / accent use</div>
+      </div>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-top:8px;">The wordmark is always set in Caveat Bold. Never use a different font. Minimum size: 24px. Always maintain sufficient contrast against the background.</p>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ─── Components ─── -->
+  <div class="section">
+    <div class="section-label">04 — Components</div>
+    <div class="section-title">UI Patterns</div>
+    <div class="components-grid">
+      <div class="component-card">
+        <div class="component-title">Buttons</div>
+        <div>
+          <button class="btn-primary">🎙️ Start Dictating</button>
+          <button class="btn-amber">Export PDF</button>
+          <button class="btn-ghost">Learn more</button>
+        </div>
+        <div style="margin-top:16px;font-size:12px;color:var(--muted);">
+          Primary: Ink fill, white text, pill shape (100px radius)<br/>
+          Accent: Amber fill — CTAs and export actions<br/>
+          Ghost: Border only — secondary actions
+        </div>
+      </div>
+      <div class="component-card">
+        <div class="component-title">Cards</div>
+        <div class="card-example">
+          <div class="card-example-title">Caveat — Handwriting feel</div>
+          <div class="card-example-body">Natural, slightly imperfect. Each word has its own rhythm. Perfect for notes, messages, and GoodNotes exports.</div>
+        </div>
+        <div style="margin-top:8px;font-size:12px;color:var(--muted);">Parchment (#F0EBE0) background · 12px radius · no hard border</div>
+      </div>
+      <div class="component-card">
+        <div class="component-title">Inputs</div>
+        <input class="input-example" placeholder="Font name…" />
+        <div style="font-size:12px;color:var(--muted);">Border #E4DDD4 → Amber on focus · 8px radius · Inter 14px</div>
+      </div>
+      <div class="component-card">
+        <div class="component-title">Badges &amp; Labels</div>
+        <div style="margin-top:4px;">
+          <span class="badge">Pro</span>
+          <span class="badge">New</span>
+          <span class="badge dark">Notebook mode</span>
+          <span class="badge dark">Quick mode</span>
+        </div>
+        <div style="margin-top:12px;font-size:12px;color:var(--muted);">Amber tint for status/tier labels · Ink tint for feature labels · Pill shape always</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ─── Spacing & Radius ─── -->
+  <div class="section">
+    <div class="section-label">05 — Spacing &amp; Shape</div>
+    <div class="section-title">Design Tokens</div>
+    <div class="spacing-row">
+      <div>
+        <div class="spacing-block" style="width:4px;height:4px;"></div>
+        <div class="spacing-label">4</div>
+      </div>
+      <div>
+        <div class="spacing-block" style="width:8px;height:8px;"></div>
+        <div class="spacing-label">8</div>
+      </div>
+      <div>
+        <div class="spacing-block" style="width:12px;height:12px;"></div>
+        <div class="spacing-label">12</div>
+      </div>
+      <div>
+        <div class="spacing-block" style="width:16px;height:16px;"></div>
+        <div class="spacing-label">16</div>
+      </div>
+      <div>
+        <div class="spacing-block" style="width:24px;height:24px;"></div>
+        <div class="spacing-label">24</div>
+      </div>
+      <div>
+        <div class="spacing-block" style="width:32px;height:32px;"></div>
+        <div class="spacing-label">32</div>
+      </div>
+      <div>
+        <div class="spacing-block" style="width:48px;height:48px;"></div>
+        <div class="spacing-label">48</div>
+      </div>
+      <div>
+        <div class="spacing-block" style="width:64px;height:64px;"></div>
+        <div class="spacing-label">64</div>
+      </div>
+    </div>
+    <table style="width:100%;border-collapse:collapse;font-size:13px;margin-top:16px;">
+      <thead>
+        <tr style="border-bottom:1px solid var(--border);">
+          <th style="text-align:left;padding:8px 0;color:var(--muted);font-weight:600;">Token</th>
+          <th style="text-align:left;padding:8px 0;color:var(--muted);font-weight:600;">Value</th>
+          <th style="text-align:left;padding:8px 0;color:var(--muted);font-weight:600;">Use</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px 0;">radius-sm</td><td style="padding:8px 0;font-family:monospace;">8px</td><td style="padding:8px 0;color:var(--muted);">Inputs, small chips</td></tr>
+        <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px 0;">radius-md</td><td style="padding:8px 0;font-family:monospace;">12px</td><td style="padding:8px 0;color:var(--muted);">Cards, panels</td></tr>
+        <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px 0;">radius-lg</td><td style="padding:8px 0;font-family:monospace;">20px</td><td style="padding:8px 0;color:var(--muted);">Modals, large containers</td></tr>
+        <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px 0;">radius-pill</td><td style="padding:8px 0;font-family:monospace;">100px</td><td style="padding:8px 0;color:var(--muted);">Buttons, badges</td></tr>
+        <tr style="border-bottom:1px solid var(--border);"><td style="padding:8px 0;">shadow-sm</td><td style="padding:8px 0;font-family:monospace;">0 2px 8px rgba(0,0,0,.06)</td><td style="padding:8px 0;color:var(--muted);">Cards at rest</td></tr>
+        <tr><td style="padding:8px 0;">shadow-md</td><td style="padding:8px 0;font-family:monospace;">0 8px 32px rgba(0,0,0,.10)</td><td style="padding:8px 0;color:var(--muted);">Modals, popovers</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ─── Voice & Tone ─── -->
+  <div class="section">
+    <div class="section-label">06 — Voice &amp; Tone</div>
+    <div class="section-title">Writing Style</div>
+    <div class="tone-grid">
+      <div class="tone-card do">
+        <div class="tone-card-label">✓ Do</div>
+        <p>Warm, direct, human. Like a clever friend who knows tech.</p>
+        <p>Short sentences. Active voice. Concrete specifics.</p>
+        <p>Celebrate the personal — this is <em>your</em> handwriting.</p>
+        <div class="tone-example">"Speak naturally. Watch your words appear in your handwriting."</div>
+      </div>
+      <div class="tone-card dont">
+        <div class="tone-card-label">✗ Don't</div>
+        <p>Cold or corporate. No "leverage", "synergy", "seamless".</p>
+        <p>Over-explaining. Trust the user to get it.</p>
+        <p>Exclamation marks everywhere. One at most per page.</p>
+        <div class="tone-example">"Leverage our cutting-edge AI-powered voice recognition to seamlessly generate personalized handwriting-style text outputs."</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider" />
+
+  <!-- ─── Summary ─── -->
+  <div class="section">
+    <div class="section-label">07 — Summary</div>
+    <div class="section-title">Brand in One Sentence</div>
+    <div style="background:var(--ink);border-radius:var(--radius-lg);padding:40px 44px;margin-bottom:8px;">
+      <div style="font-family:'Caveat',cursive;font-size:40px;color:var(--amber);line-height:1.2;">
+        "Warm enough to feel personal.<br/>Clean enough to feel modern."
+      </div>
+      <div style="font-family:'Inter',sans-serif;font-size:14px;color:rgba(255,255,255,0.5);margin-top:16px;">Scrivox Brand Identity · Velvet Ink direction · 2025</div>
+    </div>
+  </div>
+
+</div><!-- /page -->
+</body>
+</html>
